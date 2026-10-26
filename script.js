@@ -26,27 +26,30 @@ setInterval(function () {
     }
 }, 3000); 
 
-let oldFont = 0;
-let oldColour = 0;
-// 
+// beat
 setInterval(function () {
     beat++;
     if (beat > 4) {beat = 1}
     //console.log(beat);
     
+    if (beat !== 4) newRandFont();
+    else newRandBgColour();
+}, 600); 
 
-    if (beat !== 4) {
+
+let oldFont = 0;
+function newRandFont() {
         let newFont = Math.floor(Math.random() * fontClassList.length);
         while (newFont === oldFont) {newFont = Math.floor(Math.random() * fontClassList.length)}                // prevents repeat
         oldFont = newFont;
-
         fife.setAttribute("class", fontClassList[newFont]);
         //console.log(fontClassList[newFont]);
-    }
-    else {
-        let newColour = Math.floor(Math.random() * backgroundColours.length);
-        while (newColour === oldColour) {newColour = Math.floor(Math.random() * backgroundColours.length)}      // prevents repeat
-        oldColour = newColour;
-        document.body.style.background = backgroundColours[newColour];
-    }
-}, 600); 
+}
+
+let oldColour = 0;
+function newRandBgColour() {
+    let newColour = Math.floor(Math.random() * backgroundColours.length);
+    while (newColour === oldColour) {newColour = Math.floor(Math.random() * backgroundColours.length)}          // prevents repeat
+    oldColour = newColour;
+    document.body.style.background = backgroundColours[newColour];
+}
