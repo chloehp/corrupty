@@ -8,13 +8,17 @@ const corruption = document.getElementById("corruption");
 const allText = document.querySelectorAll("p, h1, h2, h3");
 let yPos = 0;
 let doom = true;
-let beat = 1;
+let beat = 0;
+let bar = 1;
 
 const corruptX = corruption.getContext("2d");
-corruptX.drawImage(imgContainer.lastElementChild, 0, 0);
-const imgData = corruptX.getImageData(0, 0, corruption.width, corruption.height);
-const imgDataLen = imgData.data.length;
-
+let imgData;
+let imgDataLen;
+imgContainer.lastElementChild.onload = function() {
+    corruptX.drawImage(imgContainer.lastElementChild, 0, 0, corruption.width, corruption.height);
+    imgData = corruptX.getImageData(0, 0, corruption.width, corruption.height);
+    imgDataLen = imgData.data.length;
+}
 
 // Move down a pixel every 30 ms
 setInterval(function () {
@@ -36,27 +40,29 @@ setInterval(function () {
 // beat
 setInterval(function () {
     beat++;
-    if (beat > 4) {beat = 1}
+    if (beat > 4) {
+        bar++;
+        beat = 1;
+    }
+    if (bar > 4) {bar = 1}
     //console.log(beat);
     
     if (beat === 1) newRandFont();
-    if (beat === 2) corrupt();
-    if (beat === 3) newRandFont();
     if (beat === 4) newRandBgColour();
+
+    if (bar === 1); // new image
 }, 600); 
 
+kill();
 
-function corrupt() {
-    let startPoint = Math.floor(Math.random() * imgDataLen);
-    //if (Math.random > 0.03) {
-    //    startPoint = Math.floor(Math.random() * imgDataLen);
-    //}
-    const endPoint = Math.floor(Math.random() * imgDataLen) + startPoint;
-    const colourDestroyMode = Math.floor(Math.random() * 30) + 4;
-    
+function colourCorrupt() {
+    const startPoint = Math.floor(Math.random() * imgDataLen) - (imgDataLen / 3);
+    const endPoint = Math.floor(Math.random() * imgDataLen) + startPoint;   // random end point
+    const colourDestroyMode = Math.floor(Math.random() * 30) + 4;           // random pattern of how colour is reversed
+    //console.log(startPoint);
     for (
-    let i = startPoint;                 // start at random place
-    i < endPoint;                       // end at random point between start
+    let i = startPoint;                                                     // start at random place
+    i < endPoint;                                                           // end at random point between start
     i += colourDestroyMode
     ) {
         imgData.data[i] = 255 - imgData.data[i];
@@ -65,6 +71,26 @@ function corrupt() {
         imgData.data[i+3] = 255;
         }
     corruptX.putImageData(imgData, 0, 0);    
+}
+function rectCorrupt() {
+    const diameter = corruption.width;
+    const x = (Math.random() * diameter) - (diameter / 3);
+    const y = (Math.random() * diameter) - (diameter / 3);
+    const w = Math.random() * (diameter / 1.5);
+    const h = Math.random() * (diameter / 1.5);
+    corruptX.fillStyle = "white";
+    if (Math.random() > 0.7) {                                              // 0.3 chance of random colour
+        corruptX.fillStyle = backgroundColours[Math.floor(Math.random() * backgroundColours.length)];
+    }
+    corruptX.fillRect(x, y, w, h);
+    imgData = corruptX.getImageData(0, 0, corruption.width, corruption.height);
+    corruptX.putImageData(imgData, 0, 0);  
+    //console.log(x, y, w, h);
+}
+
+function kill() {
+    setInterval(colourCorrupt, 90); 
+    setInterval(rectCorrupt, 300); 
 }
 
 let oldFont = 0;
