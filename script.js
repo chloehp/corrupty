@@ -8,17 +8,11 @@ const corruption = document.getElementById("corruption");
 const allText = document.querySelectorAll("p, h1, h2, h3");
 let yPos = 0;
 let doom = true;
-let beat = 0;
-let bar = 1;
 
 const corruptX = corruption.getContext("2d");
 let imgData;
 let imgDataLen;
-imgContainer.lastElementChild.onload = function() {
-    corruptX.drawImage(imgContainer.lastElementChild, 0, 0, corruption.width, corruption.height);
-    imgData = corruptX.getImageData(0, 0, corruption.width, corruption.height);
-    imgDataLen = imgData.data.length;
-}
+imgContainer.lastElementChild.onload = newImage;
 
 // Move down a pixel every 30 ms
 setInterval(function () {
@@ -37,23 +31,61 @@ setInterval(function () {
     }
 }, 3000); 
 
-// beat
+let beat = 1;
+let bar = 1;
+let bpm = 120;
+// BEAT
 setInterval(function () {
-    beat++;
-    if (beat > 4) {
-        bar++;
-        beat = 1;
+        
+    switch (beat) {     
+        case 1:
+            break;
+        case 2:
+            newRandFont();
+            break;
+        case 3:
+            killCommence()
+            break;
+        case 4:
+            killCease();
+            newRandBgColour()
+            break;
+        default:
+            //killCease();
+            colourCorrupt();
+            bar++;
+            beat = 1;
     }
-    if (bar > 4) {bar = 1}
-    //console.log(beat);
-    
-    if (beat === 1) newRandFont();
-    if (beat === 4) newRandBgColour();
 
-    if (bar === 1); // new image
-}, 600); 
+    switch (bar) {     
+        case 1:
+            break; 
+        case 2:
+            break;
+        case 3:
+            if (beat === 1) newImage();
+            break;
+        case 4:
+            //if (beat == 4) killCommence();
+            break;
+        default:
+            if (beat === 1) newImage();
+            bar = 1;
+    }
 
-kill();
+    rectCorrupt();
+    colourCorrupt();
+    console.log(beat, bar);
+    beat++;
+}, (60000 / bpm)); 
+
+function newImage() {
+    imgArray = imgContainer.children;
+    const r = Math.floor(Math.random() * imgArray.length);
+    corruptX.drawImage(imgArray[r], 0, 0, corruption.width, corruption.height);
+    imgData = corruptX.getImageData(0, 0, corruption.width, corruption.height);
+    imgDataLen = imgData.data.length;
+}
 
 function colourCorrupt() {
     const startPoint = Math.floor(Math.random() * imgDataLen) - (imgDataLen / 3);
@@ -88,9 +120,15 @@ function rectCorrupt() {
     //console.log(x, y, w, h);
 }
 
-function kill() {
-    setInterval(colourCorrupt, 90); 
-    setInterval(rectCorrupt, 300); 
+let colourCorruptInterval;
+let rectCorruptInterval;
+function killCommence() {
+    colourCorruptInterval = setInterval(colourCorrupt, 30); 
+    //rectCorruptInterval = setInterval(rectCorrupt, 180); 
+}
+function killCease() {
+    clearInterval(colourCorruptInterval);
+    //clearInterval(rectCorruptInterval);
 }
 
 let oldFont = 0;
