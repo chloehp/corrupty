@@ -15,6 +15,7 @@ let imgDataLen;
 imgContainer.lastElementChild.onload = newImage;
 
 let colourCorruptInterval;
+let rectCorruptInterval;
 
 // Move down a pixel every 30 ms
 setInterval(function () {
@@ -46,28 +47,40 @@ setInterval(function () {
             newRandFont();
             break;
         case 3:
-            //colourCorruptInterval = setInterval(colourCorrupt, 30);
-            shiftCorrupt();
             break;
         case 4:
-            //clearInterval(colourCorruptInterval);
             newRandBgColour()
             break;
         default:
-            colourCorrupt();
             bar++;
             beat = 1;
     }
 
     switch (bar) {     
         case 1:
+            if (beat === 3) {
+                colourCorruptInterval = setInterval(colourCorrupt, 9);
+                //rectCorruptInterval = setInterval(rectCorrupt, 180);
+            }
+            if (beat === 4) {
+                clearInterval(colourCorruptInterval);
+                //clearInterval(rectCorruptInterval);
+                newImage();
+            }
             break; 
         case 2:
+            if (beat === 3) shiftCorrupt();
             break;
         case 3:
             if (beat === 1) newImage();
+            if (beat === 3) {
+                shiftCorrupt();
+                colourCorruptInterval = setInterval(colourCorrupt, 12);
+            }
+            if (beat === 4) clearInterval(colourCorruptInterval);
             break;
         case 4:
+            if (beat === 3) shiftCorrupt();
             break;
         default:
             if (beat === 1) newImage();
@@ -123,11 +136,16 @@ function rectCorrupt() {
 
 function shiftCorrupt() {
     let shift = 0;
-    for (let i = 0; i < 12; i++) {
+    const r = Math.random();
+
+    for (let i = 0; i < 18; i++) {
         setTimeout(function () {
-            shift += 9;
-            corruptX.putImageData(imgData, 0 - shift, shift);            
-        }, (50 * i)); 
+            shift += 7;
+            if (r < 0.3)        corruptX.putImageData(imgData, 0 - shift, shift);
+            else if ( r < 0.6)  corruptX.putImageData(imgData, shift, shift);
+            else if ( r < 0.9)  corruptX.putImageData(imgData, shift, 0 - shift);
+            else                corruptX.putImageData(imgData, 0, 0 - shift);
+        }, (30 * i)); 
     }
 }
 
