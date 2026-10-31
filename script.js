@@ -14,6 +14,8 @@ let imgData;
 let imgDataLen;
 imgContainer.lastElementChild.onload = newImage;
 
+let colourCorruptInterval;
+
 // Move down a pixel every 30 ms
 setInterval(function () {
     if (doom) {
@@ -44,14 +46,14 @@ setInterval(function () {
             newRandFont();
             break;
         case 3:
-            killCommence()
+            //colourCorruptInterval = setInterval(colourCorrupt, 30);
+            shiftCorrupt();
             break;
         case 4:
-            killCease();
+            //clearInterval(colourCorruptInterval);
             newRandBgColour()
             break;
         default:
-            //killCease();
             colourCorrupt();
             bar++;
             beat = 1;
@@ -66,7 +68,6 @@ setInterval(function () {
             if (beat === 1) newImage();
             break;
         case 4:
-            //if (beat == 4) killCommence();
             break;
         default:
             if (beat === 1) newImage();
@@ -120,15 +121,14 @@ function rectCorrupt() {
     //console.log(x, y, w, h);
 }
 
-let colourCorruptInterval;
-let rectCorruptInterval;
-function killCommence() {
-    colourCorruptInterval = setInterval(colourCorrupt, 30); 
-    //rectCorruptInterval = setInterval(rectCorrupt, 180); 
-}
-function killCease() {
-    clearInterval(colourCorruptInterval);
-    //clearInterval(rectCorruptInterval);
+function shiftCorrupt() {
+    let shift = 0;
+    for (let i = 0; i < 12; i++) {
+        setTimeout(function () {
+            shift += 9;
+            corruptX.putImageData(imgData, 0 - shift, shift);            
+        }, (50 * i)); 
+    }
 }
 
 let oldFont = 0;

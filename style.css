@@ -355,6 +355,10 @@ section {
     position: relative;
 }
 
+#viewport {
+    box-shadow: 0 0 66px;
+}
+
 #img_container {
     position: fixed;
     visibility: hidden;
