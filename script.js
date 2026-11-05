@@ -17,6 +17,32 @@ imgContainer.lastElementChild.onload = newImage;
 let colourCorruptInterval;
 let rectCorruptInterval;
 
+let beat = 1;
+let bar = 1;
+let bpm = 120;
+
+let oldFont = 0;
+let oldColour = 0;
+
+/*
+const sequence = [
+    [{newImage()}, {bar = 1}],
+    [newRandFont()],
+    [colourCorruptInterval = setInterval(colourCorrupt, 9)],
+    [clearInterval(colourCorruptInterval), newImage()],
+
+    [],
+    [],
+    [shiftCorrupt()],
+    [],
+
+    [newImage()],
+    [],
+    [shiftCorrupt(), colourCorruptInterval = setInterval(colourCorrupt, 12)],
+    []    
+];
+*/
+
 // Move down a pixel every 30 ms
 setInterval(function () {
     if (doom) {
@@ -34,9 +60,6 @@ setInterval(function () {
     }
 }, 3000); 
 
-let beat = 1;
-let bar = 1;
-let bpm = 120;
 // BEAT
 setInterval(function () {
         
@@ -91,7 +114,7 @@ setInterval(function () {
     colourCorrupt();
     console.log(beat, bar);
     beat++;
-}, (60000 / bpm)); 
+}, (60000 / bpm));
 
 function newImage() {
     imgArray = imgContainer.children;
@@ -149,7 +172,6 @@ function shiftCorrupt() {
     }
 }
 
-let oldFont = 0;
 function newRandFont() {
         let newFont = Math.floor(Math.random() * fontClassList.length);
         while (newFont === oldFont) {newFont = Math.floor(Math.random() * fontClassList.length)}                // prevents repeat
@@ -158,7 +180,6 @@ function newRandFont() {
         //console.log(fontClassList[newFont]);
 }
 
-let oldColour = 0;
 function newRandBgColour() {
     let newColour = Math.floor(Math.random() * backgroundColours.length);
     while (newColour === oldColour) {newColour = Math.floor(Math.random() * backgroundColours.length)}          // prevents repeat
