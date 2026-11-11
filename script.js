@@ -95,12 +95,16 @@ setInterval(function () {
     }
 }, (60000 / bpm));
 
+let previousImg;
 function newImage() {
     imgArray = imgContainer.children;
-    const r = Math.floor(Math.random() * imgArray.length);
-    corruptX.drawImage(imgArray[r], 0, 0, corruption.width, corruption.height);
+    let nextImg = Math.floor(Math.random() * imgArray.length);
+    while (nextImg === previousImg) {nextImg = Math.floor(Math.random() * imgArray.length)}          // prevents repeat
+    previousImg = nextImg;
+    corruptX.drawImage(imgArray[nextImg], 0, 0, corruption.width, corruption.height);
     imgData = corruptX.getImageData(0, 0, corruption.width, corruption.height);
     imgDataLen = imgData.data.length;
+    
 }
 
 function colourCorrupt() {
