@@ -1,5 +1,5 @@
 const fontClassList = ["playfair-display", "unifrakturmaguntia-regular", "audiowide-regular", "libre-barcode-39-text-regular", "micro-5-regular", "helvetica"];
-const backgroundColours = ["#983b3b", "#227228", "#722246", "#b06809", "#ff06c1", "#272477", "black"];
+const backgroundColours = ["#983b3b", "#227228", "#722246", "#b06809", "#ff06c1", "#272477", "black", "green", "red", "yellow", "brown"];
 
 const fife = document.getElementById("objects_container");
 const root = document.getElementById("root");
@@ -17,31 +17,6 @@ imgContainer.lastElementChild.onload = newImage;
 let colourCorruptInterval;
 let rectCorruptInterval;
 
-let beat = 1;
-let bar = 1;
-let bpm = 120;
-
-let oldFont = 0;
-let oldColour = 0;
-
-/*
-const sequence = [
-    [{newImage()}, {bar = 1}],
-    [newRandFont()],
-    [colourCorruptInterval = setInterval(colourCorrupt, 9)],
-    [clearInterval(colourCorruptInterval), newImage()],
-
-    [],
-    [],
-    [shiftCorrupt()],
-    [],
-
-    [newImage()],
-    [],
-    [shiftCorrupt(), colourCorruptInterval = setInterval(colourCorrupt, 12)],
-    []    
-];
-*/
 
 // Move down a pixel every 30 ms
 setInterval(function () {
@@ -60,60 +35,64 @@ setInterval(function () {
     }
 }, 3000); 
 
+
 // BEAT
+let beat = 1;
+let bar = 1;
+let bpm = 120;
 setInterval(function () {
-        
-    switch (beat) {     
-        case 1:
-            break;
-        case 2:
-            newRandFont();
-            break;
-        case 3:
-            break;
-        case 4:
-            newRandBgColour()
-            break;
-        default:
-            bar++;
-            beat = 1;
-    }
+    //console.log(beat, bar);
 
     switch (bar) {     
         case 1:
-            if (beat === 3) {
-                colourCorruptInterval = setInterval(colourCorrupt, 9);
-                //rectCorruptInterval = setInterval(rectCorrupt, 180);
+            switch (beat) {     
+                case 1:
+                    newRandBgColour();
+                    newImage();
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    colourCorruptInterval = setInterval(colourCorrupt, 9);
+                    break;
+                default://4
+                    clearInterval(colourCorruptInterval);
+                    newImage();
             }
-            if (beat === 4) {
-                clearInterval(colourCorruptInterval);
-                //clearInterval(rectCorruptInterval);
-                newImage();
-            }
-            break; 
+            break;
+
         case 2:
             if (beat === 3) shiftCorrupt();
             break;
+
         case 3:
-            if (beat === 1) newImage();
-            if (beat === 3) {
-                shiftCorrupt();
-                colourCorruptInterval = setInterval(colourCorrupt, 12);
+            switch (beat) {     
+                case 1:
+                    newImage();
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    shiftCorrupt();
+                    colourCorruptInterval = setInterval(colourCorrupt, 12);
+                    break;
+                default://4
+                    clearInterval(colourCorruptInterval);
             }
-            if (beat === 4) clearInterval(colourCorruptInterval);
             break;
-        case 4:
-            if (beat === 3) shiftCorrupt();
-            break;
+
         default:
-            if (beat === 1) newImage();
-            bar = 1;
+            if (beat === 3) shiftCorrupt();
+            if (beat === 4) bar = 0;//(1)   reset bar
     }
 
     rectCorrupt();
     colourCorrupt();
-    console.log(beat, bar);
     beat++;
+    if (beat > 4) {
+        beat = 1;
+        bar++;
+    }
 }, (60000 / bpm));
 
 function newImage() {
@@ -172,6 +151,7 @@ function shiftCorrupt() {
     }
 }
 
+let oldFont = 0;
 function newRandFont() {
         let newFont = Math.floor(Math.random() * fontClassList.length);
         while (newFont === oldFont) {newFont = Math.floor(Math.random() * fontClassList.length)}                // prevents repeat
@@ -180,6 +160,7 @@ function newRandFont() {
         //console.log(fontClassList[newFont]);
 }
 
+let oldColour = 0;
 function newRandBgColour() {
     let newColour = Math.floor(Math.random() * backgroundColours.length);
     while (newColour === oldColour) {newColour = Math.floor(Math.random() * backgroundColours.length)}          // prevents repeat
